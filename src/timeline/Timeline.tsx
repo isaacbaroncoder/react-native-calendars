@@ -4,7 +4,7 @@ import times from 'lodash/times';
 import groupBy from 'lodash/groupBy';
 
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, NativeSyntheticEvent, NativeScrollEvent} from 'react-native';
 
 import constants from '../commons/constants';
 import {generateDay} from '../dateutils';
@@ -115,6 +115,14 @@ export interface TimelineProps {
   timelineLeftInset?: number;
   /** Identifier for testing */
   testID?: string;
+  /**
+   * Callback triggered when the user scrolls vertically inside the Timeline.
+   * Receives the scroll event (NativeSyntheticEvent<NativeScrollEvent>) allowing access to offset, velocity, and other scroll properties.
+   *
+   * Note: This event is useful for handling external UI interactions (such as animating floating buttons)
+   * while the user scrolls vertically in the Timeline.
+   */
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void
 }
 
 const Timeline = (props: TimelineProps) => {
@@ -143,6 +151,7 @@ const Timeline = (props: TimelineProps) => {
     numberOfDays = 1,
     timelineLeftInset = 0,
     testID,
+    onScroll
   } = props;
 
   const pageDates = useMemo(() => {
@@ -250,7 +259,9 @@ const Timeline = (props: TimelineProps) => {
       style={styles.current.container}
       contentContainerStyle={[styles.current.contentStyle, {width: constants.screenWidth}]}
       showsVerticalScrollIndicator={false}
-      {...scrollEvents}
+      onScroll={onScroll}
+      onScrollEndDrag={scrollEvents.onScrollEndDrag}
+      onMomentumScrollEnd={scrollEvents.onMomentumScrollEnd}
       testID={testID}
     >
       <TimelineHours
