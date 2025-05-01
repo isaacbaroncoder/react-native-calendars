@@ -260,8 +260,7 @@ const Timeline = (props: TimelineProps) => {
       contentContainerStyle={[styles.current.contentStyle, {width: constants.screenWidth}]}
       showsVerticalScrollIndicator={false}
       onScroll={onScroll}
-      onScrollEndDrag={scrollEvents.onScrollEndDrag}
-      onMomentumScrollEnd={scrollEvents.onMomentumScrollEnd}
+      {...scrollEvents}
       testID={testID}
     >
       <TimelineHours
